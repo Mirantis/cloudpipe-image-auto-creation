@@ -44,7 +44,7 @@ The right and the only way to configure the script is the setting of environment
 
     \# virsh list --all
 
-  You will see the status of the VM named **$VM_NAME**. Make sure that it is in the **shut off** state.
+    You will see the status of the VM named **$VM_NAME**. Make sure that it is in the **shut off** state.
 * Check the log file for any failed operations.
 * Then upload the VM hdd image into OpenStack. Don't forget about root password.
 
