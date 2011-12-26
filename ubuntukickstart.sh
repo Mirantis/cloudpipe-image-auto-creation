@@ -50,6 +50,15 @@ function wait_and_ping_it {
     while :
     do
 	echo -n "."
+        status=`LANG=C virsh domstate $VM_NAME`
+        if [ "$status" = "shut off" ]; 
+        then
+            MESSAGE="shutdowing the VM .."
+            log "$MESSAGE"
+            echo "$MESSAGE"
+            sleep 1
+            break
+        fi
         ping -c 1 -W 3 $VM_IP 2>/dev/null 1>/dev/null
         if [ $? = "0" ];
         then
@@ -60,7 +69,7 @@ function wait_and_ping_it {
                 log "$MESSAGE"
                 echo "$MESSAGE"
                 sleep 15
-                exit 0
+                break
             fi
         fi
         sleep $1
@@ -226,5 +235,15 @@ run "virt-install --pxe --name=$VM_NAME --ram=$VM_RAM --disk path=$VM_DISK_PATH,
 #wait for about 1-2 hour(s) while installation is not finished
 echo -n "waiting for an end of installation: "
 wait_and_ping_it 15
+
+#undefine machine
+
+MESSAGE="undefining VM"
+ERROR_MESSAGE="undefining VM failed"
+run "virsh undefine $VM_NAME"
+
+MESSAGE="destroying virtual net"
+ERROR_MESSAGE="destroying virtual net failed"
+run "virsh net-destroy $NETWORK_NAME"
 
 #end
